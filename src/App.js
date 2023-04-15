@@ -1,64 +1,54 @@
 import React, { useState, useEffect } from "react";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
-import Row from "react-bootstrap/Row";
-import { Navigation } from "./components/Navigation";
-import { PokemonCard } from "./components/PokemonCard";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider} from "react-router-dom";
+import { Home, PokemonDetails, Layout } from "./routes";
 
 const LIMIT = 150;
 const pokeApi = `https://pokeapi.co/api/v2/pokemon/?limit=${LIMIT}`;
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
-  const [filteredPokemon, setFilteredPokemon] = useState([]);
-  const [search, setSearch] = useState("");
 
+  // Get the Pokemon
+  // fetch using the provided pokeApi url and set the returned data on state
+  // note the API returns a data.results array of objects, each one containing just an ID, a Name, and a URL. That returned URL will be used to fetch the rest of the data about the Pokemon.
   useEffect(() => {
     fetch(pokeApi)
       .then((res) => res.json())
-      .then((data) => setPokemonList(data.results))
+      .then((data) => {
+        console.log(data); // Log the data returned from the fetch
+        setPokemonList(data.results);
+      })
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    setFilteredPokemon(
-      pokemonList.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(search.toLowerCase())
-      )
-    );
-  }, [search, pokemonList]);
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {path: "/", element: <Home />},
+        {path: "/:name", element: <PokemonDetails />}
+      ]
+    }
+  ])
 
   return (
-    <div data-testid="app">
-      <Navigation />
+      <div>
+        <RouterProvider router={router} />
+      </div>
+    
 
-      <Container>
-        <Row className="mb-4">
-          <Col sm="8" md="6" className="mx-auto">
-            <InputGroup>
-              <InputGroup.Text id="search">Search</InputGroup.Text>
-              <FormControl
-                value={search}
-                aria-label="search"
-                aria-describedby="search"
-                placeholder="Search Pokemon"
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </InputGroup>
-          </Col>
-        </Row>
+    // <BrowserRouter>
+    //   <div data-testid="app">
+    //     <Navigation />
 
-        <Row className="g-4">
-          {filteredPokemon.map((pokemon) => (
-            <Col key={pokemon.name}>
-              <PokemonCard url={pokemon.url} name={pokemon.name} />
-            </Col>
-          ))}
-        </Row>
-      </Container>
-    </div>
+    //     <Routes>
+    //       <Route path="/" element={<Home pokemonList={pokemonList} />} />
+    //       <Route path="/:name" element={<PokemonDetails />} />
+    //     </Routes>
+    //   </div>
+    // </BrowserRouter>
   );
 }
 
