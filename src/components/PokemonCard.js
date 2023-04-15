@@ -1,21 +1,18 @@
 import React, {useState, useEffect} from 'react';
 import Card from "react-bootstrap/Card"
-// import Form from "react-bootstrap/Form"
-// import Button from "react-bootstrap/Button"
-// import {pokeApi} from "../App"
-
-
 
 //  we destructured the url and name variables directly from the props object, using object destructuring syntax in the function parameter definition. This allows us to use the url and name variables directly in the component.
-
+// Iterate over the pokemonList array and for each pokemon render a single PokemonCard passing the name and url to the card
 function PokemonCard({ url, name }) {
   const [pokemon, setPokemon] = useState(null)
 
+  // We then used the fetch method to fetch the pokemonData from the API using the url variable directly. We then used the json method to parse the response and set the pokemon state with the data.
   useEffect(() => {
-    // We then used the fetch method to fetch the pokemonData from the API using the url variable directly. We then used the json method to parse the response and set the pokemon state with the data.
     fetch(url)
       .then(res => res.json())
-      .then(data => setPokemon(data))
+      .then((data) => {
+        console.log(data) // Log the data returned from the fetch, This URL will return all the data about a specific Pokemon.
+        setPokemon(data)})
       .catch((error) => {
         console.log(error)
       })
@@ -46,28 +43,8 @@ function PokemonCard({ url, name }) {
       </Card>
   );
 }
-//     <div>
-//         <Form className="d-flex">
-//           <Form.Control
-//             type="search"
-//             placeholder="Search"
-//             className="me-2"
-//             aria-label="Search"
-//           />
-//           <Button onChange={handleChange} variant="outline-success">Search</Button>
-//         </Form>
-
-//         {pokemonData.results && pokemonData.results.map((pokemon) => {
-//           <Card key={pokemon.name} classname="my-3">
-//             <Card.Body>
-//               <Card.Title>
-//                 {pokemon.name}
-//               </Card.Title>
-//             </Card.Body>
-//           </Card>
-//         })}
-//     </div>
-//   );
-// }}
 
 export { PokemonCard }
+
+// In line 28 & 35, the "?" after pokemon is the optional chaining operator in JavaScript. It is used to prevent potential errors that may occur when trying to access nested properties or methods on an object that may be null or undefined.
+// If "pokemon" is null or undefined, the expression "{pokemon?.sprites.front_default}" will evaluate to "undefined" instead of causing an error. This can help prevent crashes or unexpected behavior in your application when dealing with potentially undefined or null values.
